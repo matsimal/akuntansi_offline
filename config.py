@@ -1,0 +1,8 @@
+DB_NAME = "akuntansi.db"
+APP_TITLE = "Software Akuntansi Offline"
+APP_SIZE = "1280x760"
+THEME_BG = "#f9fafb"
+SIDEBAR_BG = "#1f2937"
+BTN_BG = "#374151"
+BTN_ACTIVE = "#4b5563"
+CARD_BG = "white"

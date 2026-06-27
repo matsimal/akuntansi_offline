@@ -1,0 +1,1 @@
+self.service = DashboardService(db)
