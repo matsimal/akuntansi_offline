@@ -1,18 +1,18 @@
 import tkinter as tk
 
 from views.dashboard.kpi_card import KPICard
-from services.dashboard_service import DashboardService
+
 
 class KPICards(tk.Frame):
 
-    def __init__(self, parent, db):
+    def __init__(self, parent, service):
 
         super().__init__(
             parent,
             bg="#f9fafb"
         )
 
-        self.db = db
+        self.service = service
 
         self.build_ui()
 
