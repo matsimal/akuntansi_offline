@@ -1,4 +1,5 @@
 import tkinter as tk
+from utils.currency_utils import rupiah
 
 from views.dashboard.kpi_card import KPICard
 
@@ -61,3 +62,16 @@ class KPICards(tk.Frame):
             )
 
             self.kpi.append(widget)
+        
+        self.refresh()
+
+    def refresh(self):
+
+        data = self.service.get_kpi()
+
+        self.kpi[0].set_value(rupiah(data["sales"]))
+        self.kpi[1].set_value(rupiah(data["purchase"]))
+        self.kpi[2].set_value(rupiah(data["profit"]))
+        self.kpi[3].set_value(rupiah(data["cash"]))
+        self.kpi[4].set_value(rupiah(data["receivable"]))
+        self.kpi[5].set_value(rupiah(data["payable"]))

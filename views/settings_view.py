@@ -1,19 +1,24 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
+from tkinter.colorchooser import askcolor
+from config import THEME
 
 
 class SettingsView(tk.Frame):
     def __init__(self, parent, db):
-        super().__init__(parent, bg="#f9fafb")
+        super().__init__(
+        parent,
+        bg=THEME["background_color"]
+        )
         self.db = db
         self.build_ui()
 
     def build_ui(self):
-        header = tk.Frame(self, bg="#f9fafb")
+        header = tk.Frame(self, bg=THEME["background_color"])
         header.pack(fill="x", pady=(0, 10))
 
         tk.Label(
-            header, text="Pengaturan", font=("Segoe UI", 16, "bold"), bg="#f9fafb"
+            header, text="Pengaturan", font=("Segoe UI", 16, "bold"), bg=THEME["background_color"]
         ).pack(side="left")
 
         notebook = ttk.Notebook(self)
@@ -21,10 +26,14 @@ class SettingsView(tk.Frame):
 
         self.build_company_tab(notebook)
         self.build_numbering_tab(notebook)
+
+        # ===== THEME MANAGER =====
+        self.build_theme_tab(notebook)
+
         self.build_info_tab(notebook)
 
     def build_company_tab(self, notebook):
-        tab = tk.Frame(notebook, bg="white")
+        tab = tk.Frame(notebook, bg=THEME["background_color"])
         notebook.add(tab, text="Profil Perusahaan")
 
         profile = self.db.execute("SELECT * FROM company_profile LIMIT 1").fetchone()
@@ -32,31 +41,31 @@ class SettingsView(tk.Frame):
         from tkinter import filedialog
         from PIL import Image, ImageTk
 
-        tk.Label(tab, text="Nama Perusahaan", bg="white").grid(
+        tk.Label(tab, text="Nama Perusahaan", bg=THEME["background_color"]).grid(
             row=0, column=0, padx=10, pady=(10, 2), sticky="w"
         )
 
-        tk.Label(tab, text="Alamat", bg="white").grid(
+        tk.Label(tab, text="Alamat", bg=THEME["background_color"]).grid(
             row=1, column=0, padx=10, pady=(10, 2), sticky="w"
         )
 
-        tk.Label(tab, text="Rekening Perusahaan", bg="white").grid(
+        tk.Label(tab, text="Rekening Perusahaan", bg=THEME["background_color"]).grid(
             row=2, column=0, padx=10, pady=(10, 2), sticky="w"
         )
 
-        tk.Label(tab, text="Rekening Perusahaan #2", bg="white").grid(
+        tk.Label(tab, text="Rekening Perusahaan #2", bg=THEME["background_color"]).grid(
             row=3, column=0, padx=10, pady=(10, 2), sticky="w"
         )
 
-        tk.Label(tab, text="Telepon", bg="white").grid(
+        tk.Label(tab, text="Telepon", bg=THEME["background_color"]).grid(
             row=4, column=0, padx=10, pady=(10, 2), sticky="w"
         )
 
-        tk.Label(tab, text="Status Pajak", bg="white").grid(
+        tk.Label(tab, text="Status Pajak", bg=THEME["background_color"]).grid(
             row=5, column=0, padx=10, pady=(10, 2), sticky="w"
         )
 
-        tk.Label(tab, text="Logo Perusahaan 150x110px", bg="white").grid(
+        tk.Label(tab, text="Logo Perusahaan 150x110px", bg=THEME["background_color"]).grid(
             row=6, column=0, padx=10, pady=(10, 2), sticky="w"
         )
 
@@ -94,7 +103,7 @@ class SettingsView(tk.Frame):
 
         logo_path = profile["logo"] if "logo" in profile.keys() else ""
 
-        logo_label = tk.Label(tab, bg="white")
+        logo_label = tk.Label(tab, bg=THEME["background_color"])
 
         def load_logo(path):
             try:
@@ -121,7 +130,7 @@ class SettingsView(tk.Frame):
                 load_logo(file)
 
         upload_btn = tk.Button(
-            tab, text="Upload Logo", command=upload_logo, bg="#6366f1", fg="white"
+            tab, text="Upload Logo", command=upload_logo, bg=THEME["button_color"], fg="white"
         )
 
         company_entry.grid(row=0, column=1, padx=10, pady=(10, 2), sticky="w")
@@ -163,19 +172,19 @@ class SettingsView(tk.Frame):
             tab,
             text="Simpan Profil",
             command=save_profile,
-            bg="#2563eb",
-            fg="white",
+            bg=THEME["button_color"],
+            fg=THEME["button_text_color"],
             padx=15,
         ).grid(row=9, column=1, padx=10, pady=15, sticky="w")
 
     def build_numbering_tab(self, notebook):
-        tab = tk.Frame(notebook, bg="white")
+        tab = tk.Frame(notebook, bg=THEME["background_color"])
         notebook.add(tab, text="Penomoran Dokumen")
 
         note = tk.Label(
             tab,
             text="Gunakan placeholder tanggal: {YYYY}, {YY}, {MM}, {DD}\nContoh prefix: INVJ-{YYYY}{MM}- atau PO-{YY}{MM}{DD}-",
-            bg="white",
+            bg=THEME["background_color"],
             justify="left",
             fg="#374151",
         )
@@ -272,14 +281,14 @@ class SettingsView(tk.Frame):
             tab,
             text="Edit Penomoran",
             command=edit_numbering,
-            bg="#2563eb",
-            fg="white",
+            bg=THEME["button_color"],
+            fg=THEME["button_text_color"],
             relief="flat",
             padx=15,
         ).pack(anchor="w", padx=10, pady=(0, 10))
 
     def build_info_tab(self, notebook):
-        tab = tk.Frame(notebook, bg="white")
+        tab = tk.Frame(notebook, bg=THEME["background_color"])
         notebook.add(tab, text="Info Pengembangan")
 
         info_text = tk.Text(tab, wrap="word")
@@ -288,19 +297,138 @@ class SettingsView(tk.Frame):
         info_text.insert(
             "1.0",
             """
-Modul yang sudah ditingkatkan:
-- Sort data table
-- Edit / hapus master data
-- Edit / hapus transaksi tertentu
-- Input harga normal dan diskon penjualan
-- Pembayaran cicilan / sebagian
-- Akun lawan untuk kas & bank
-- Diskon pada kas & bank
-- Prefix nomor dengan tanggal otomatis
-""",
+            Modul yang sudah ditingkatkan:
+            - Sort data table
+            - Edit / hapus master data
+            - Edit / hapus transaksi tertentu
+            - Input harga normal dan diskon penjualan
+            - Pembayaran cicilan / sebagian
+            - Akun lawan untuk kas & bank
+            - Diskon pada kas & bank
+            - Prefix nomor dengan tanggal otomatis
+            """,
         )
         info_text.config(state="disabled")
 
     def refresh_self(self):
         self.destroy()
         SettingsView(self.master, self.db).pack(fill="both", expand=True)
+
+    def build_theme_tab(self, notebook):
+
+        tab = tk.Frame(
+            notebook,
+            bg=THEME["background_color"]
+        )
+
+        notebook.add(tab, text="Tema Aplikasi")
+
+        fields = [
+            ("Background Utama", "background_color"),
+            ("Text Utama", "text_color"),
+            ("Background Sidebar", "sidebar_color"),
+            ("Text Judul Sidebar", "sidebar_text_color"),
+            ("Box Sidebar", "menu_color"),
+            ("Box Sidebar Aktif", "menu_active_color"),
+            ("Text Box Sidebar", "menu_text_color"),
+            ("Card", "card_color"),
+            ("Warna Tombol", "button_color"),
+            ("Warna Hover Tombol", "button_hover_color"),
+            ("Warna Text Tombol", "button_text_color"),
+            ("Warna Border Tombol", "button_border_color"),
+        ]
+
+        entries = {}
+
+        for row, (label, key) in enumerate(fields):
+
+            tk.Label(
+                tab,
+                text=label,
+                bg=THEME["background_color"]
+            ).grid(
+                row=row,
+                column=0,
+                padx=10,
+                pady=6,
+                sticky="w"
+            )
+
+            e = tk.Entry(tab, width=20)
+
+            e.insert(
+                0,
+                THEME.get(key, "")
+            )
+
+            e.grid(
+                row=row,
+                column=1,
+                padx=10,
+                pady=6,
+                sticky="w"
+            )
+
+            entries[key] = e
+
+            tk.Button(
+                tab,
+                text="Pilih",
+                command=lambda ent=e: self.choose_color(ent),
+                bg=THEME["button_color"],
+                fg="white",
+                width=10
+            ).grid(
+                row=row,
+                column=2,
+                padx=10,
+                pady=6
+            )
+
+        tk.Button(
+            tab,
+            text="Simpan Tema",
+            bg=THEME["button_color"],
+            fg="white",
+            padx=20,
+            command=lambda: self.save_theme(entries)
+        ).grid(
+            row=len(fields)+1,
+            column=1,
+            pady=20,
+            sticky="w"
+        )
+
+    def choose_color(self, entry):
+
+        color = askcolor()[1]
+
+        if color:
+
+            entry.delete(0, tk.END)
+
+            entry.insert(0, color)
+
+    def save_theme(self, entries):
+        from services.theme_service import ThemeService
+        import os
+        import sys
+
+        data = {}
+
+        for key, entry in entries.items():
+            data[key] = entry.get().strip()
+
+        ThemeService(self.db).save(data)
+
+        # Simpan ke theme yang sedang berjalan
+        THEME.update(data)
+
+        if messagebox.askyesno(
+            "Tema Disimpan",
+            "Tema berhasil disimpan.\n\nAplikasi akan dimulai ulang sekarang.\nLanjutkan?"
+        ):
+            self.master.destroy()          # Tutup window sekarang
+            os.execl(sys.executable, sys.executable, *sys.argv)
+
+        

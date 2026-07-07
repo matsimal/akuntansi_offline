@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 
-from utils import current_date
-from utils import treeview_sort_column
+from utils.date_utils import today_str
+from utils.treeview_utils import treeview_sort_column
 
+from widgets.date_picker import DatePicker
 
 class InventoryView(tk.Frame):
 
@@ -56,10 +57,8 @@ class InventoryView(tk.Frame):
             row=0, column=3, padx=10, pady=(10, 2), sticky="w"
         )
 
-        from datepicker import DatePicker
-
         self.date_entry = DatePicker(form)
-        self.date_entry.set(current_date())
+        self.date_entry.set(today_str())
 
         self.prod_combo = ttk.Combobox(
             form, values=list(self.product_map.keys()), state="readonly"

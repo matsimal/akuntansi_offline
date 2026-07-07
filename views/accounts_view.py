@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
-from utils import format_number
+
+from utils.number_utils import format_number
 
 
 class AccountsView(tk.Frame):

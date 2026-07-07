@@ -1,4 +1,4 @@
-from utils import current_date
+from utils.date_utils import today_str
 
 
 class AccountingService:
@@ -420,7 +420,7 @@ class AccountingService:
             commit=True,
         )
 
-        ref = self.db.get_next_number("RCV", current_date())
+        ref = self.db.get_next_number("RCV", today_str())
 
         # simpan kas bank
         self.db.execute(
@@ -430,7 +430,7 @@ class AccountingService:
         VALUES (?, 'IN', ?, ?, ?,0,?,?)
         """,
             (
-                current_date(),
+                today_str(),
                 account_name,
                 account_code,
                 amount,
@@ -442,7 +442,7 @@ class AccountingService:
 
         # jurnal
         self.db.add_journal(
-            current_date(),
+            today_str(),
             ref,
             f"Pembayaran {invoice_no}",
             [(account_code, amount, 0), ("1101", 0, amount)],
@@ -873,7 +873,7 @@ class AccountingService:
             commit=True,
         )
 
-        ref = self.db.get_next_number("PAY", current_date())
+        ref = self.db.get_next_number("PAY", today_str())
 
         # simpan kas / bank
         self.db.execute(
@@ -883,7 +883,7 @@ class AccountingService:
         VALUES (?, 'OUT', ?, ?, ?,0,?,?)
         """,
             (
-                current_date(),
+                today_str(),
                 account_name,
                 account_code,
                 amount,
@@ -895,7 +895,7 @@ class AccountingService:
 
         # jurnal otomatis
         self.db.add_journal(
-            current_date(),
+            today_str(),
             ref,
             f"Pembayaran {invoice_no}",
             [("2101", amount, 0), (account_code, 0, amount)],

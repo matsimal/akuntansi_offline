@@ -1,5 +1,4 @@
 import tkinter as tk
-from utils import rupiah
 
 from services.dashboard_service import DashboardService
 
@@ -24,9 +23,9 @@ class DashboardView(tk.Frame):
 
         self.header = HeaderFrame(
             self,
-            self.db
+            self.dashboard_service
         )
-
+        
         self.header.pack(
             fill="x",
             padx=15,
@@ -43,14 +42,3 @@ class DashboardView(tk.Frame):
             fill="x",
             padx=15
         )
-
-    def refresh(self):
-
-        data = self.service.get_kpi()
-
-        self.kpi[0].set_value(rupiah(data["sales"]))
-        self.kpi[1].set_value(rupiah(data["purchase"]))
-        self.kpi[2].set_value(rupiah(data["profit"]))
-        self.kpi[3].set_value(rupiah(data["cash"]))
-        self.kpi[4].set_value(rupiah(data["receivable"]))
-        self.kpi[5].set_value(rupiah(data["payable"]))

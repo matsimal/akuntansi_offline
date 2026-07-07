@@ -4,10 +4,11 @@ from datetime import datetime
 
 class HeaderFrame(tk.Frame):
 
-    def __init__(self, parent, db):
+    def __init__(self, parent, service):
+
         super().__init__(parent, bg="#f9fafb")
 
-        self.db = db
+        self.service = service
 
         self.build_ui()
 
@@ -38,11 +39,7 @@ class HeaderFrame(tk.Frame):
 
         # ----------------------------------
 
-        profile = self.db.execute("""
-            SELECT company_name
-            FROM company_profile
-            LIMIT 1
-        """).fetchone()
+        profile = self.service.get_company_profile()
 
         company = "Perusahaan"
 

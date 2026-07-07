@@ -1,10 +1,13 @@
 import tkinter as tk
+
 from tkinter import ttk, messagebox
-from openpyxl import Workbook, load_workbook
 from tkinter import filedialog
 
-from utils import treeview_sort_column
-from utils import parse_number, bind_number_entry, format_number
+from openpyxl import Workbook, load_workbook
+
+from utils.treeview_utils import treeview_sort_column
+from utils.number_utils import parse_number, format_number
+from utils.widget_utils import bind_number_entry
 
 
 class CustomerView(tk.Frame):

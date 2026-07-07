@@ -1,8 +1,11 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from widgets.date_picker import DatePicker
 
-from utils import treeview_sort_column
-from utils import current_date, bind_number_entry, parse_number, format_number
+from utils.number_utils import format_number, parse_number
+from utils.treeview_utils import treeview_sort_column
+from utils.date_utils import today_str
+from utils.widget_utils import bind_number_entry
 
 
 class CashBankView(tk.Frame):
@@ -50,8 +53,6 @@ class CashBankView(tk.Frame):
             tk.Label(form, text=lbl, bg="white").grid(
                 row=0, column=i, padx=10, pady=(10, 2), sticky="w"
             )
-
-        from datepicker import DatePicker
 
         self.date_entry = DatePicker(form)
 

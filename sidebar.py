@@ -1,15 +1,16 @@
 import tkinter as tk
+import customtkinter as ctk
 
-from config import SIDEBAR_BG
+from config import THEME
 
 
-class Sidebar(tk.Frame):
+class Sidebar(ctk.CTkFrame):
 
     def __init__(self, parent, db, callback):
 
         super().__init__(
             parent,
-            bg=SIDEBAR_BG,
+            fg_color=THEME["sidebar_color"],
             width=300
         )
 
@@ -34,6 +35,9 @@ class Sidebar(tk.Frame):
             scrollregion=self.canvas.bbox("all")
         )
 
+        self.apply_theme()
+        
+
     # ==========================================================
     # HEADER (FIXED)
     # ==========================================================
@@ -42,7 +46,7 @@ class Sidebar(tk.Frame):
 
         self.header = tk.Frame(
             self,
-            bg=SIDEBAR_BG,
+            bg=THEME["sidebar_color"],
             height=230
         )
 
@@ -57,8 +61,8 @@ class Sidebar(tk.Frame):
         tk.Label(
             self.header,
             text="© 2026 dibuat oleh Thio Charlie",
-            bg=SIDEBAR_BG,
-            fg="#9ca3af",
+            bg=THEME["sidebar_color"],
+            fg=THEME["sidebar_text_color"],
             font=("Segoe UI",9)
         ).pack(
             pady=(8,10)
@@ -72,7 +76,7 @@ class Sidebar(tk.Frame):
 
         self.canvas = tk.Canvas(
             self,
-            bg=SIDEBAR_BG,
+            bg=THEME["sidebar_color"],
             highlightthickness=0
         )
 
@@ -84,7 +88,7 @@ class Sidebar(tk.Frame):
 
         self.scroll_frame = tk.Frame(
             self.canvas,
-            bg=SIDEBAR_BG
+            bg=THEME["sidebar_color"]
         )
 
         # Frame di dalam Canvas
@@ -197,7 +201,7 @@ class Sidebar(tk.Frame):
 
         frame = tk.Frame(
             parent,
-            bg=SIDEBAR_BG
+            bg=THEME["sidebar_color"]
         )
 
         frame.pack(
@@ -227,7 +231,7 @@ class Sidebar(tk.Frame):
                 lbl = tk.Label(
                     frame,
                     image=photo,
-                    bg=SIDEBAR_BG
+                    bg=THEME["sidebar_color"]
                 )
 
                 lbl.image = photo
@@ -286,6 +290,13 @@ class Sidebar(tk.Frame):
 
                 self.add_button(text, page)
 
+    # Spacer atas
+        tk.Frame(
+            self.scroll_frame,
+            height=30,
+            bg=THEME["sidebar_color"]
+        ).pack(fill="x")
+
     # ==========================================================
     # HEADING
     # ==========================================================
@@ -295,8 +306,8 @@ class Sidebar(tk.Frame):
         tk.Label(
             self.scroll_frame,
             text=text,
-            bg=SIDEBAR_BG,
-            fg="#94a3b8",
+            bg=THEME["sidebar_color"],
+            fg=THEME["sidebar_text_color"],
             anchor="w",
             padx=25,
             pady=8,
@@ -309,51 +320,23 @@ class Sidebar(tk.Frame):
 
     def add_button(self, text, page):
 
-        btn = tk.Label(
-
+        btn = ctk.CTkButton(
             self.scroll_frame,
-
             text=text,
-
-            bg="#b91c1c",
-
-            fg="white",
-
-            padx=28,
-
-            pady=13,
-
+            corner_radius=10,
+            height=42,
+            fg_color=THEME["menu_color"],
+            hover_color="#323844",
+            text_color=THEME["menu_text_color"],
             anchor="w",
-
-            cursor="hand2",
-
-            font=("Segoe UI", 11, "bold")
+            font=("Segoe UI", 11, "bold"),
+            command=lambda: self.menu_click(page)
         )
 
         btn.pack(
             fill="x",
-            padx=18,
-            pady=4
-        )
-
-        btn.bind(
-            "<Button-1>",
-            lambda e:
-            self.menu_click(page)
-        )
-
-        btn.bind(
-            "<Enter>",
-            lambda e,
-            b=btn:
-            self.hover(b)
-        )
-
-        btn.bind(
-            "<Leave>",
-            lambda e,
-            b=btn:
-            self.leave(b)
+            padx=14,
+            pady=3
         )
 
         self.menu_buttons[page] = btn
@@ -367,17 +350,13 @@ class Sidebar(tk.Frame):
         for key, btn in self.menu_buttons.items():
 
             if key == page:
-
-                btn.config(
-                    bg="#2563eb",
-                    fg="white"
+                btn.configure(
+                    fg_color=THEME["menu_active_color"]
                 )
 
             else:
-
-                btn.config(
-                    fg="white",
-                    bg="#b91c1c"
+                btn.configure(
+                    fg_color=THEME["menu_color"]
                 )
 
         self.callback(page)
@@ -388,17 +367,17 @@ class Sidebar(tk.Frame):
 
     def hover(self, btn):
 
-        if btn.cget("bg") == "#2563eb":
+        if btn.cget("fg_color") == THEME["menu_active_color"]:
             return
 
-        btn.config(bg="#374151")
+        btn.configure(fg_color=THEME["menu_color"])
 
     def leave(self, btn):
 
-        if btn.cget("bg") == "#2563eb":
+        if btn.cget("fg_color") == THEME["menu_active_color"]:
             return
 
-        btn.config(bg="#b91c1c")
+        btn.configure(fg_color=THEME["menu_color"])
 
     # ==========================================================
     # ACTIVE
@@ -407,3 +386,62 @@ class Sidebar(tk.Frame):
     def set_active(self, page):
 
         self.menu_click(page)
+
+    def refresh_theme(self):
+
+        self.configure(
+
+            fg_color=THEME["sidebar_color"]
+
+        )
+
+        for child in self.winfo_children():
+
+            try:
+
+                child.configure(
+
+                    fg_color=THEME["sidebar_color"]
+
+                )
+
+            except:
+
+                pass
+
+        for btn in self.menu_buttons.values():
+
+            btn.configure(
+
+                fg_color=THEME["menu_color"],
+
+                text_color=THEME["menu_text_color"],
+
+                hover_color=THEME["menu_active_color"],
+
+                text_color_disabled=THEME["menu_text_color"]
+
+            )
+
+    def apply_theme(self):
+
+        self.configure(fg_color=THEME["sidebar_color"])
+
+        if hasattr(self, "logo_frame"):
+            self.logo_frame.configure(fg_color=THEME["sidebar_color"])
+
+        if hasattr(self, "title"):
+            self.title.configure(
+                fg_color=THEME["sidebar_color"],
+                text_color=THEME["sidebar_text_color"]
+            )
+
+        if hasattr(self, "menu_buttons"):
+            for btn in self.menu_buttons.values():
+                btn.configure(
+                    fg_color=THEME["menu_color"],
+                    text_color=THEME["menu_text_color"],
+                    hover_color=THEME["menu_active_color"],
+                    text_color_disabled=THEME["menu_text_color"]
+                )
+

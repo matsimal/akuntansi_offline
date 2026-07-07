@@ -1,11 +1,19 @@
 import sqlite3
+
 import tkinter as tk
+
 from tkinter import ttk, messagebox, simpledialog
 
-from utils import parse_number, format_number, bind_number_entry
+from utils.number_utils import parse_number, format_number
+from utils.widget_utils import bind_number_entry
 
 from openpyxl import Workbook
+
 from tkinter import filedialog
+
+from components.action_card import ActionCard
+
+from config import THEME
 
 
 def treeview_sort_column(tree, col, reverse=False, numeric=False):
@@ -38,7 +46,7 @@ class ProductView(tk.Frame):
 
     def __init__(self, parent, db, refresh_callback=None):
 
-        super().__init__(parent, bg="#f9fafb")
+        super().__init__(parent, bg=THEME["background_color"])
 
         self.db = db
         self.refresh_callback = refresh_callback
@@ -53,21 +61,25 @@ class ProductView(tk.Frame):
 
     def build_ui(self):
 
-        header = tk.Frame(self, bg="#f9fafb")
+        header = tk.Frame(self, bg=THEME["background_color"])
         header.pack(fill="x")
 
         tk.Label(
-            header, text="Master Produk", font=("Segoe UI", 20, "bold"), bg="#f9fafb"
+            header,
+            text="Master Produk",
+            font=("Segoe UI", 20, "bold"),
+            bg=THEME["background_color"],
+            fg=THEME["text_color"]
         ).pack(side="left", padx=10, pady=10)
 
-        toolbar = tk.Frame(self, bg="#f9fafb")
-        toolbar.pack(fill="x", pady=5)
+        toolbar = tk.Frame(self, bg=THEME["background_color"])
+        toolbar.pack(fill="x", pady=10)
 
         # =========================
         # SEARCH & FILTER
         # =========================
 
-        search_frame = tk.Frame(self, bg="#f9fafb")
+        search_frame = tk.Frame(self, bg=THEME["background_color"])
         search_frame.pack(fill="x", pady=5)
 
         self.select_all_var = tk.BooleanVar()
@@ -89,10 +101,15 @@ class ProductView(tk.Frame):
             search_frame,
             variable=self.select_all_var,
             command=toggle_select_all,
-            bg="#f9fafb",
+            bg=THEME["background_color"],
         ).pack(side="left", padx=(5, 5))
 
-        tk.Label(search_frame, text="Cari Produk:", bg="#f9fafb").pack(
+        tk.Label(
+            search_frame,
+            text="Cari Produk:",
+            bg=THEME["background_color"],
+            fg=THEME["text_color"]
+        ).pack(
             side="left", padx=(5, 2)
         )
 
@@ -102,7 +119,12 @@ class ProductView(tk.Frame):
         self.search_entry.bind("<KeyRelease>", lambda e: self.load_data())
 
         # kategori
-        tk.Label(search_frame, text="Kategori:", bg="#f9fafb").pack(
+        tk.Label(
+            search_frame,
+            text="Kategori:",
+            bg=THEME["background_color"],
+            fg=THEME["text_color"]
+        ).pack(
             side="left", padx=(15, 2)
         )
 
@@ -119,7 +141,12 @@ class ProductView(tk.Frame):
 
         self.category_filter.bind("<<ComboboxSelected>>", lambda e: self.load_data())
 
-        tk.Label(search_frame, text="Status:", bg="#f9fafb").pack(
+        tk.Label(
+            search_frame,
+            text="Status:",
+            bg=THEME["background_color"],
+            fg=THEME["text_color"]
+        ).pack(
             side="left", padx=(15, 2)
         )
 
@@ -139,63 +166,100 @@ class ProductView(tk.Frame):
         self.total_label = tk.Label(
             search_frame,
             text="Total Produk: 0",
-            bg="#f9fafb",
+            bg=THEME["background_color"],
+            fg=THEME["text_color"],
             font=("Segoe UI", 10, "bold"),
         )
 
         self.total_label.pack(side="right", padx=10)
 
-        tk.Button(
+        ActionCard(
             toolbar,
-            text="Tambah Produk",
-            bg="#10b981",
-            width=14,
+            title="Tambah\nProduk",
+            icon="➕",
+            bg=THEME["button_color"],
+            fg=THEME["button_text_color"],
+            hover_bg=THEME["button_hover_color"],
+            border_color=THEME["button_border_color"],
             command=self.popup_add_product,
-        ).pack(side="left", padx=5)
+        ).pack(side="left", padx=10)
 
-        tk.Button(
+        ActionCard(
             toolbar,
-            text="Edit Produk",
-            bg="#f59e0b",
-            width=14,
+            title="Edit\nProduk",
+            icon="✏️",
+            bg=THEME["button_color"],
+            fg=THEME["button_text_color"],
+            hover_bg=THEME["button_hover_color"],
+            border_color=THEME["button_border_color"],
             command=self.update_product,
-        ).pack(side="left", padx=5)
+        ).pack(side="left", padx=10)
 
-        tk.Button(
-            toolbar, text="Hapus", bg="#ef4444", width=14, command=self.delete_product
-        ).pack(side="left", padx=5)
-
-        tk.Button(
-            toolbar, text="Cetak", bg="#AE00FF", width=14, command=self.print_products
-        ).pack(side="left", padx=5)
-
-        tk.Button(
+        ActionCard(
             toolbar,
-            text="Edit Kategori",
-            bg="#D45800",
-            width=14,
+            title="Hapus\nProduk",
+            icon="🗑",
+            bg=THEME["button_color"],
+            fg=THEME["button_text_color"],
+            hover_bg=THEME["button_hover_color"],
+            border_color=THEME["button_border_color"],
+            command=self.delete_product,
+        ).pack(side="left", padx=10)
+
+        ActionCard(
+            toolbar,
+            title="Cetak\nProduk",
+            icon="🖨",
+            bg=THEME["button_color"],
+            fg=THEME["button_text_color"],
+            hover_bg=THEME["button_hover_color"],
+            border_color=THEME["button_border_color"],
+            command=self.print_products,
+        ).pack(side="left", padx=10)
+
+        ActionCard(
+            toolbar,
+            title="Edit\nKategori",
+            icon="✏️",
+            bg=THEME["button_color"],
+            fg=THEME["button_text_color"],
+            hover_bg=THEME["button_hover_color"],
+            border_color=THEME["button_border_color"],
             command=self.popup_edit_category,
-        ).pack(side="left", padx=5)
+        ).pack(side="left", padx=10)
 
-        tk.Button(
+        ActionCard(
             toolbar,
-            text="Edit Satuan",
-            bg="#00FF00",
-            width=14,
+            title="Edit\nSatuan",
+            icon="✏️",
+            bg=THEME["button_color"],
+            fg=THEME["button_text_color"],
+            hover_bg=THEME["button_hover_color"],
+            border_color=THEME["button_border_color"],
             command=self.popup_edit_unit,
-        ).pack(side="left", padx=5)
+        ).pack(side="left", padx=10)
 
-        tk.Button(
+        ActionCard(
             toolbar,
-            text="Import XLSX",
-            bg="#6366f1",
-            width=14,
+            title="Import\nXLSX",
+            icon="📥",
+            bg=THEME["button_color"],
+            fg=THEME["button_text_color"],
+            hover_bg=THEME["button_hover_color"],
+            border_color=THEME["button_border_color"],
             command=self.import_products,
-        ).pack(side="left", padx=5)
+        ).pack(side="left", padx=10)
 
-        tk.Button(
-            toolbar, text="Refresh", bg="#3b82f6", width=14, command=self.load_data
-        ).pack(side="right", padx=5)
+        ActionCard(
+            toolbar,
+            title="Refresh",
+            icon="🔄",
+            bg=THEME["button_color"],
+            fg=THEME["button_text_color"],
+            hover_bg=THEME["button_hover_color"],
+            border_color=THEME["button_border_color"],
+            command=self.load_data
+        ).pack(side="right", padx=10)
 
         # =========================
         # TABLE

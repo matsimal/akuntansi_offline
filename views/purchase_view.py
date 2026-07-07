@@ -1,13 +1,12 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 
-from utils import (
-    current_date,
-    bind_number_entry,
-    parse_number,
-    format_number,
-)
+from utils.date_utils import today_str, start_of_month, end_of_month, start_of_year, end_of_year
+from utils.number_utils import format_number
+from utils.number_utils import parse_number
+from utils.widget_utils import bind_number_entry
 
+from widgets.date_picker import DatePicker
 
 class PurchaseView(tk.Frame):
 
@@ -891,7 +890,6 @@ class PurchaseView(tk.Frame):
             sticky="w",
         )
 
-        from datepicker import DatePicker
 
         date_entry = DatePicker(main, width=10)
 
@@ -1828,7 +1826,7 @@ class PurchaseView(tk.Frame):
             ).fetchone()
 
             return_no = self.service.create_purchase_return(
-                current_date(),
+                today_str(),
                 invoice_no,
                 inv["supplier_id"],
                 items,

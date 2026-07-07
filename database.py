@@ -74,6 +74,30 @@ class Database:
         self.add_column_if_not_exists("suppliers", "pic", "TEXT")
         self.add_column_if_not_exists("suppliers", "is_active", "INTEGER DEFAULT 1")
 
+        try:
+            self.execute(
+                """
+                CREATE TABLE IF NOT EXISTS app_theme (
+                    id INTEGER PRIMARY KEY,
+                    background_color TEXT,
+                    text_color TEXT,
+                    sidebar_color TEXT,
+                    sidebar_text_color TEXT,
+                    menu_color TEXT,
+                    menu_active_color TEXT,
+                    menu_text_color TEXT,
+                    card_color TEXT,
+                    button_color TEXT,
+                    button_hover_color TEXT,
+                    button_text_color TEXT,
+                    button_border_color TEXT
+                )
+                """,
+                commit=True,
+            )
+        except Exception as e:
+            print("Migration Theme :", e)
+
     def create_tables(self):
         queries = [
             """
@@ -107,6 +131,23 @@ class Database:
             CREATE TABLE IF NOT EXISTS payment_methods (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT UNIQUE
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS app_theme (
+                id INTEGER PRIMARY KEY,
+                background_color TEXT DEFAULT '#f9fafb',
+                text_color TEXT DEFAULT '#1f2937',
+                sidebar_color TEXT DEFAULT '#1f2937',
+                sidebar_text_color TEXT DEFAULT '#ffffff',
+                menu_color TEXT DEFAULT '#374151',
+                menu_active_color TEXT DEFAULT '#2563eb',
+                menu_text_color TEXT DEFAULT '#ffffff',
+                card_color TEXT DEFAULT '#ffffff',
+                button_color TEXT DEFAULT '#2563eb',
+                button_hover_color TEXT DEFAULT '#1d4ed8',
+                button_text_color TEXT DEFAULT '#ffffff',
+                button_border_color TEXT DEFAULT '#1e40af'
             )
             """,
             """
@@ -406,6 +447,47 @@ class Database:
                 ("Perusahaan Anda", "", "", "NON-PPN"),
                 commit=True,
             )
+        
+        theme = self.execute(
+            "SELECT COUNT(*) AS cnt FROM app_theme"
+        ).fetchone()
+
+        if theme["cnt"] == 0:
+            self.execute(
+                """
+                INSERT INTO app_theme(
+                    id,
+                    background_color,
+                    text_color,
+                    sidebar_color,
+                    sidebar_text_color,
+                    menu_color,
+                    menu_active_color,
+                    menu_text_color,
+                    card_color,
+                    button_color,
+                    button_hover_color,
+                    button_text_color,
+                    button_border_color
+                )
+                VALUES(
+                    1,
+                    '#f9fafb',
+                    '#1f2937',
+                    '#1f2937',
+                    '#ffffff',
+                    '#374151',
+                    '#2563eb',
+                    '#ffffff',
+                    '#ffffff',
+                    '#2563eb',
+                    '#1d4ed8',
+                    '#ffffff',
+                    '#1e40af'
+                )
+                """,
+                commit=True,
+            )
 
         row = self.execute("SELECT COUNT(*) AS cnt FROM users").fetchone()
         if row["cnt"] == 0:
@@ -556,4 +638,47 @@ class Database:
         stock = row["stock"] if row else 0
         self.execute(
             "UPDATE products SET stock=? WHERE id=?", (stock, product_id), commit=True
+        )
+
+    def get_theme(self):
+
+        row = self.execute(
+            "SELECT * FROM app_theme WHERE id=1"
+        ).fetchone()
+        return dict(row) if row else None
+    
+    def save_theme(self, data):
+        self.execute(
+            """
+            UPDATE app_theme
+            SET
+                background_color=?,
+                text_color=?,
+                sidebar_color=?,
+                sidebar_text_color=?,
+                menu_color=?,
+                menu_active_color=?,
+                menu_text_color=?,
+                card_color=?,
+                button_color=?,
+                button_hover_color=?,
+                button_text_color=?,
+                button_border_color=?
+            WHERE id=1
+            """,
+            (
+                data["background_color"],
+                data["text_color"],
+                data["sidebar_color"],
+                data["sidebar_text_color"],
+                data["menu_color"],
+                data["menu_active_color"],
+                data["menu_text_color"],
+                data["card_color"],
+                data["button_color"],
+                data["button_hover_color"],
+                data["button_text_color"],
+                data["button_border_color"]
+            ),
+            commit=True,
         )

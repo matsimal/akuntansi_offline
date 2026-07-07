@@ -1,11 +1,22 @@
 from datetime import date
-from utils import rupiah
 
 class DashboardService:
 
     def __init__(self, db):
 
         self.db = db
+
+    def get_company_profile(self):
+
+        row = self.db.execute("""
+            SELECT company_name,
+                   address,
+                   phone
+            FROM company_profile
+            LIMIT 1
+        """).fetchone()
+
+        return row
 
     def get_kpi(self):
 
@@ -45,13 +56,7 @@ class DashboardService:
             """
         ).fetchone()[0]
 
-        cash = self.db.execute(
-            """
-            SELECT COALESCE(SUM(balance),0)
-            FROM accounts
-            WHERE type='Asset'
-            """
-        ).fetchone()[0]
+        cash = 0
 
         profit = sales - purchase
 
@@ -69,3 +74,53 @@ class DashboardService:
 
             "payable": payable,
         }
+    
+    def get_profit_summary(self):
+
+        return {
+
+            "sales":0,
+
+            "cogs":0,
+
+            "expense":0,
+
+            "profit":0,
+        }
+    
+    def get_cash_summary(self):
+
+        return {
+
+            "cash_in":0,
+
+            "cash_out":0,
+
+            "balance":0,
+        }
+    
+    def get_top_customers(self):
+
+        return []
+    
+    def get_top_suppliers(self):
+
+        return []
+    
+    def get_stock_warning(self):
+
+        return []
+    
+    def get_recent_activity(self):
+
+        return []
+    
+    def get_company_profile(self):
+
+        return self.db.execute("""
+            SELECT company_name,
+                address,
+                phone
+            FROM company_profile
+            LIMIT 1
+        """).fetchone()

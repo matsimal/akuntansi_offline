@@ -1,8 +1,9 @@
 import os
 import tkinter as tk
 from database import Database
-from services import AccountingService
-from config import APP_TITLE, APP_SIZE, THEME_BG, SIDEBAR_BG, BTN_BG, BTN_ACTIVE
+from services.accounting_service import AccountingService
+from config import APP_TITLE, APP_SIZE, THEME
+from services.theme_service import ThemeService
 
 from sidebar import Sidebar
 from views.ai_chat_view import AIChatView
@@ -25,7 +26,9 @@ class AccountingApp(tk.Tk):
         super().__init__()
         self.title(APP_TITLE)
         self.geometry(APP_SIZE)
-        self.configure(bg=THEME_BG)
+        self.configure(
+        bg=THEME["background_color"]
+        )
 
         if os.name == "nt":
             try:
@@ -34,6 +37,22 @@ class AccountingApp(tk.Tk):
                 pass
 
         self.db = Database()
+
+        # ===============================
+        # Load Theme dari Database
+        # ===============================
+
+        try:
+
+            theme = ThemeService(self.db).load()
+
+            if theme:
+                THEME.update(theme)
+
+        except Exception as e:
+
+            print("Theme tidak dapat dimuat :", e)
+
         self.service = AccountingService(self.db)
 
         self.sidebar = Sidebar(
@@ -47,7 +66,7 @@ class AccountingApp(tk.Tk):
             fill="y"
         )
         
-        self.content = tk.Frame(self, bg=THEME_BG)
+        self.content = tk.Frame(self, bg=THEME["background_color"])
         self.content.pack(side="right", fill="both", expand=True)
 
         self.current_frame = None
@@ -64,7 +83,7 @@ class AccountingApp(tk.Tk):
         self.current_frame.pack(fill="both", expand=True, padx=10, pady=10)
 
     def refresh_dashboard(self):
-        self.show_dashboard()
+        self.show_page("dashboard")
 
     def show_page(self, page):
 
@@ -143,6 +162,21 @@ class AccountingApp(tk.Tk):
 
         if page in pages:
             self.set_frame(pages[page]())
+
+    def reload_theme(self):
+
+        try:
+
+            theme = ThemeService(self.db).load()
+
+            THEME.update(theme)
+
+        except Exception as e:
+
+            print(e)
+            self.reload_theme()
+
+
 
 if __name__ == "__main__":
     app = AccountingApp()

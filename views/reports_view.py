@@ -1,6 +1,6 @@
 from datetime import date
 import tkinter as tk
-from utils import rupiah
+from utils.currency_utils import rupiah
 
 
 class ReportsView(tk.Frame):
@@ -25,8 +25,6 @@ class ReportsView(tk.Frame):
         filter_frame.pack(fill="x")
 
         tk.Label(filter_frame, text="Tahun:", bg="#f9fafb").pack(side="left")
-
-        from datetime import date
 
         current_year = date.today().year
 
@@ -115,8 +113,6 @@ class ReportsView(tk.Frame):
         WHERE status!='PAID'
         """
         ).fetchone()[0]
-
-        from utils import rupiah
 
         lines = []
 
